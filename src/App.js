@@ -1,0 +1,38 @@
+import "mapbox-gl/dist/mapbox-gl.css";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+
+import Splash from "./components/Splash";
+import Trip from "./components/Trip";
+import "./css/app.css";
+
+const fetchData = (FilE_NAME) => {
+  return fetch(`${process.env.PUBLIC_URL}/data/${FilE_NAME}.json`)
+    .then(response => response.json());
+};
+
+const App = () => {
+  const [trip, setTrip] = useState([]);
+  const [isloaded, setIsLoaded] = useState(false);
+
+  const getData = useCallback(async () => {
+    const TRIP = await fetchData("trips");
+    setTrip((prev) => TRIP);
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
+
+  return (
+    <div className="container">
+      {!isloaded && <Splash />}
+      {isloaded && (
+        <Trip trip={trip} />
+      )}
+    </div>
+  );
+};
+
+export default App;
